@@ -1,0 +1,161 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>demo App</title>
+  <meta name="description" content="My demo App">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.5.0.min.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	
+	 <meta http-equiv="refresh" content="10"> 
+  
+  <script type="text/javascript">
+	
+	//var dodo = [];
+	//var kerker = [];
+	
+	
+	// Load the Visualization API and the piechart package.
+	google.load('visualization', '1.1', {packages:['corechart','line']});
+	// Set a callback to run when the Google Visualization API is loaded.
+	google.setOnLoadCallback(init);
+	
+	
+	
+	function init(){
+	
+    Parse.initialize("OoUYVD2pj7X9rCQmogLnp64Zykz02ZzdyJ4fXCH3", "rQ4ez5BZUQp1pUIilkAewT33UarQFNjPTbEXiUwd");
+	
+	var dodo = [];
+	
+    var Temperlist = Parse.Object.extend("GPA");
+	var query = new Parse.Query(Temperlist);
+	query.descending("time");
+	query.select("time", "temp1", "temp2", "temp3", "temp4");
+	query.limit(20);
+	query.find({
+		success: function(results){
+			//alert("Successfully retrieved " + results.length + " records.");  
+			   // Do something with the returned Parse.Object values  
+			   var count;
+			for (var i = 0; i < results.length; i++) {  
+					count = results.length;
+					count = count-i-1;
+					//alert(count);
+					dodo[count]= new Array(5);
+					var object = results[i];
+					//datatable += object.get('time')+","+object.get('temp1')+","+object.get('temp2')+",";
+					dodo[count][0] = object.get('time');
+					dodo[count][1] = parseFloat(object.get('temp1'));
+					dodo[count][2] = parseFloat(object.get('temp2'));
+					dodo[count][3] = parseFloat(object.get('temp3'));
+					dodo[count][4] = parseFloat(object.get('temp4'));
+					//alert(object.get('time') + ' - ' + object.get('temp1')); 
+			   }
+
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string','Time');
+			  data.addColumn('number','t1');
+			  data.addColumn('number','t2');
+			  data.addColumn('number','t3');
+			  data.addColumn('number','t4');
+
+			  data.addRows(dodo);
+
+			  var options = {
+				fontSize: 20,
+				title: 'Temperature Chart',
+				hAxis:{
+					title: 'Time'
+				},
+				vAxis:{
+					title: 'temperature'
+				},
+				pointSize: 10,
+				width: 1200,
+				height: 500
+			  };
+
+			  //var chart = new google.charts.Line(document.getElementById('chart1'));
+				var chart = new google.visualization.LineChart(document.getElementById('chart1'));
+			  
+			  chart.draw(data, options);
+		 },
+		 error: function(error){
+				alert("Error:" + error.code + " " + error.message);
+		 }
+	});
+	
+	var kerker = [];
+	
+    var vibratelist = Parse.Object.extend("dodo");
+	var vibrate = new Parse.Query(vibratelist);
+	vibrate.descending("time");
+	vibrate.select("time", "varx1", "varx2");
+	vibrate.limit(20);
+	vibrate.find({
+		success: function(results){
+			//alert("Successfully retrieved " + results.length + " records.");  
+			   // Do something with the returned Parse.Object values
+			var count;			   
+			for (var i = 0; i < results.length; i++) {  
+					count = results.length;
+					count = count-i-1;
+					kerker[count]= new Array(3);
+					var object = results[i];
+					//datatable += object.get('time')+","+object.get('temp1')+","+object.get('temp2')+",";  
+					kerker[count][0] = object.get('time');
+					kerker[count][1] = parseFloat(object.get('varx1'));
+					kerker[count][2] = parseFloat(object.get('varx2')); 
+			   }  
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string','Time');
+			  data.addColumn('number','varx1');
+			  data.addColumn('number','varx2');
+
+
+			  data.addRows(kerker);
+
+			  var options = {
+				fontSize: 20,
+				title: 'ADXL Chart',
+				hAxis:{
+					title: 'Time'
+				},
+				vAxis:{
+					title: 'variance'
+				},
+				pointSize: 10,
+				width: 1200,
+				height: 500
+			  };
+
+			  var chart = new google.visualization.LineChart(document.getElementById('chart2'));
+
+			  chart.draw(data, options); 
+		 },
+		 error: function(error){
+				alert("Error:" + error.code + " " + error.message);
+		 }
+	});
+	}
+	
+  </script>
+</head>
+
+<body>
+
+  <table border="1">
+	<tbody>
+		<tr><td><div id="chart1" ></div></td></tr>
+		<tr><td><div id="chart2" ></div></td></tr>
+	</tbody>
+  </table>
+  
+</body>
+
+</html>
